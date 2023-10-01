@@ -13,11 +13,18 @@ document.querySelectorAll(".select").forEach((value) => {
 });
 let cells = 8; // マスの数
 
+// AIの後攻プレイヤー
+const AI_COLOR = WHITE;
+
 // スタート画面でマスの数が選択された時の処理
 function start(e) {
   board.innerHTML = "";
   init();
   modal.classList.add("hide");
+  // AIのターンが始まる
+  if (!turn) {
+    setTimeout(aiTurn, 1000);
+  }
 }
 
 // 初期化
@@ -112,6 +119,10 @@ function showTurn() {
     turn = !turn;
     setTimeout(showTurn, 2000);
     return;
+  }
+  // AIのターンが始まる
+  if (!turn) {
+    setTimeout(aiTurn, 1000);
   }
 }
 
@@ -226,4 +237,35 @@ function restartBtn() {
 }
 function showAnime() {
   h2.animate({ opacity: [0, 1] }, { duration: 500, iterations: 4 });
+}
+
+// AIのターン
+function aiTurn() {
+  const availableMoves = findAvailableMoves(AI_COLOR);
+  if (availableMoves.length > 0) {
+    // ランダムに駒を置く
+    const randomMove = availableMoves[Math.floor(Math.random() * availableMoves.length)];
+    const [x, y] = randomMove;
+    setTimeout(() => {
+      clicked.call(board.rows[y].cells[x]);
+    }, 1000);
+  } else {
+    // パス
+    turn = !turn;
+    showTurn();
+  }
+}
+
+// AIが置ける場所を探す
+function findAvailableMoves(color) {
+  const availableMoves = [];
+  for (let x = 0; x < cells; x++) {
+    for (let y = 0; y < cells; y++) {
+      const result = checkPut(x, y, color);
+      if (result.length > 0) {
+        availableMoves.push([x, y]);
+      }
+    }
+  }
+  return availableMoves;
 }
