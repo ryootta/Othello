@@ -65,7 +65,7 @@ function putDisc(x, y, color) {
 
 // 手番などの表示
 function showTurn() {
-  h2.textContent = turn ? "黒の番です" : "白の番です";
+  h2.textContent = turn ? "あなたの番" : "CPUの番";
   let numWhite = 0,
     numBlack = 0,
     numEmpty = 0;
@@ -91,12 +91,12 @@ function showTurn() {
   if (numWhite + numBlack === cells * cells || (!blacDisk && !whiteDisk)) {
     if (numBlack > numWhite) {
       document.getElementById("numBlack").textContent = numBlack + numEmpty;
-      h2.textContent = "黒の勝ち!!";
+      h2.textContent = "勝ち!!";
       restartBtn();
       showAnime();
     } else if (numBlack < numWhite) {
       document.getElementById("numWhite").textContent = numWhite + numEmpty;
-      h2.textContent = "白の勝ち!!";
+      h2.textContent = "負け!!";
       restartBtn();
       showAnime();
     } else {
