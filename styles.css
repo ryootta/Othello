@@ -20,22 +20,28 @@ main {
 #menu {
   display: flex;
   justify-content: space-evenly;
-  margin-top: 220px;
+  margin-top: 20px;
 }
-h3,
+
+/* h3要素のスタイル */
+h3 {
+    color: white;
+    text-align: center; /* テキストを中央に配置 */
+    margin-top: 100px; /* 上部の余白を追加 */
+}
+/* p要素のスタイル */
 p {
-  color: white;
+    color: white;
+    text-align: center; /* テキストを中央に配置 */
+    margin-top: 0; /* 上部の余白を追加 */
+    width: 150px;
+    height: 20px;
+    padding: 5px;
+    border: solid 1px white;
+    cursor: pointer;
+    background: black;   
 }
-#menu p {
-  width: 100px;
-  font-size: 24px;
-  padding: 3px;
-  margin: 15px;
-  border: solid 1px white;
-  cursor: pointer;
-  background: black;
-  color: white;
-}
+
 
 /* game */
 #board {
@@ -78,20 +84,38 @@ td.cell {
 }
 h2 {
   text-align: center;
-  margin: 5px 0;
+  padding: auto;
+  margin: auto;
 }
 #counter {
   margin: 0 auto;
-  width: 350px;
+  width: 400px;
   display: flex;
   line-height: 50px;
   font-weight: bold;
   justify-content: space-between;
 }
+#p2{
+  text-align:right;
+  margin: 0 10px;
+  color: black;
+}
+
+#numBlack {
+  text-align:right;
+  margin: 0 10px;
+  color: black;
+}
+#numWhite {
+  text-align:right;
+  margin: 0 10px;
+  color: black;
+}
+/*
 #numBlack {
   font-size: 36px;
   margin: 5px;
-  width: 100px;
+  width: 60px;
   height: 50px;
   background: black;
   color: white;
@@ -100,11 +124,11 @@ h2 {
 #numWhite {
   font-size: 36px;
   margin: 5px;
-  width: 100px;
+  width: 60px;
   height: 50px;
   border: solid 1px black;
   border-radius: 5px;
-}
+}*
 
 /* end */
 #restartBtn {

@@ -13,9 +13,8 @@ document.querySelectorAll(".select").forEach((value) => {
 });
 let cells = 8; // マスの数
 
-// スタート画面でマスの数が選択された時の処理
+// スタート画面での選択された時の処理
 function start(e) {
-  cells = Number(e.target.id);
   board.innerHTML = "";
   init();
   modal.classList.add("hide");
@@ -58,7 +57,7 @@ function putDisc(x, y, color) {
 
 // 手番などの表示
 function showTurn() {
-  h2.textContent = turn ? "黒の番です" : "白の番です";
+  h2.textContent = turn ? "黒あなたの番です" : "白の番です";
   let numWhite = 0,
     numBlack = 0,
     numEmpty = 0;
@@ -78,18 +77,18 @@ function showTurn() {
   document.getElementById("numBlack").textContent = numBlack;
   document.getElementById("numWhite").textContent = numWhite;
 
-  let blacDisk = checkReverse(BLACK);
+  let blackDisk = checkReverse(BLACK);
   let whiteDisk = checkReverse(WHITE);
 
   if (numWhite + numBlack === cells * cells || (!blacDisk && !whiteDisk)) {
     if (numBlack > numWhite) {
       document.getElementById("numBlack").textContent = numBlack + numEmpty;
-      h2.textContent = "黒の勝ち!!";
+      h2.textContent = "の勝ち!!";
       restartBtn();
       showAnime();
     } else if (numBlack < numWhite) {
       document.getElementById("numWhite").textContent = numWhite + numEmpty;
-      h2.textContent = "白の勝ち!!";
+      h2.textContent = "CPU白の勝ち!!";
       restartBtn();
       showAnime();
     } else {
@@ -99,7 +98,7 @@ function showTurn() {
     }
     return;
   }
-  if (!blacDisk && turn) {
+  if (!blackDisk && turn) {
     h2.textContent = "黒スキップ";
     showAnime();
     turn = !turn;
