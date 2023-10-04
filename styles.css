@@ -27,7 +27,7 @@ main {
 h3 {
     color: white;
     text-align: center; /* テキストを中央に配置 */
-    margin-top: 100px; /* 上部の余白を追加 */
+    margin-top: 80px; /* 上部の余白を追加 */
 }
 /* p要素のスタイル */
 p {

@@ -11,6 +11,10 @@ const modal = document.getElementById("modal");
 document.querySelectorAll(".select").forEach((value) => {
   value.addEventListener("click", start);
 });
+
+// AIの強さを選択
+let weakAI = false; //　true:弱いAI, false:強いAI
+
 let cells = 8; // マスの数
 
 // AIの後攻プレイヤー
@@ -18,6 +22,11 @@ const AI_COLOR = WHITE;
 
 // スタート画面でマスの数が選択された時の処理
 function start(e) {
+  if (Number(e.target.id) == 1){ 
+    weakAI = true;
+  } else if (Number(e.target.id) == 2){
+    weakAI = false;
+  }
   board.innerHTML = "";
   init();
   modal.classList.add("hide");
@@ -242,10 +251,18 @@ function showAnime() {
 // AIのターン
 function aiTurn() {
   const availableMoves = findAvailableMoves(AI_COLOR);
-  if (availableMoves.length > 0) {
-    // ランダムに駒を置く
+  if (availableMoves.length > 0 && weakAI) {
     const randomMove = availableMoves[Math.floor(Math.random() * availableMoves.length)];
     const [x, y] = randomMove;
+    console.info("weak ai");
+    setTimeout(() => {
+      clicked.call(board.rows[y].cells[x]);
+    }, 1000);
+  } else if (availableMoves.length > 0 && !weakAI) {
+    // ミニマックス法で最善手を見つける
+    console.info("not weak ai");
+    const bestMove = findBestMove(availableMoves);
+    const [x, y] = bestMove;
     setTimeout(() => {
       clicked.call(board.rows[y].cells[x]);
     }, 1000);
@@ -254,6 +271,113 @@ function aiTurn() {
     turn = !turn;
     showTurn();
   }
+}
+
+// ミニマックス法で最善手を見つける
+function findBestMove(availableMoves) {
+  let bestMove = null;
+  let bestScore = -Infinity;
+
+  for (const move of availableMoves) {
+    const [x, y] = move;
+    const newData = deepCopy(data); // ボードのコピー
+    const result = checkPut(x, y, AI_COLOR);
+
+    if (result.length > 0) {
+      result.forEach((value) => {
+        newData[value[1]][value[0]] = AI_COLOR;
+      });
+
+      const score = minimax(newData, 3, false); // 探索の深さは調整可能
+      if (score > bestScore) {
+        bestScore = score;
+        bestMove = move;
+      }
+    }
+  }
+  return bestMove;
+}
+
+// ミニマックス法の再帰的な実装
+function minimax(board, depth, isMaximizing) {
+  const scores = {
+    [AI_COLOR]: 1,
+    [BLACK]: -1,
+    [WHITE]: 1,
+  };
+
+  if (depth === 0) {
+    return evaluate(board);
+  }
+
+  if (isMaximizing) {
+    let maxScore = -Infinity;
+    for (let x = 0; x < cells; x++) {
+      for (let y = 0; y < cells; y++) {
+        if (board[y][x] === 0) {
+          const newData = deepCopy(board);
+          const result = checkPut(x, y, AI_COLOR);
+          if (result.length > 0) {
+            result.forEach((value) => {
+              newData[value[1]][value[0]] = AI_COLOR;
+            });
+            const score = minimax(newData, depth - 1, false);
+            maxScore = Math.max(maxScore, score);
+          }
+        }
+      }
+    }
+    return maxScore;
+  } else {
+    let minScore = Infinity;
+    for (let x = 0; x < cells; x++) {
+      for (let y = 0; y < cells; y++) {
+        if (board[y][x] === 0) {
+          const newData = deepCopy(board);
+          const result = checkPut(x, y, BLACK);
+          if (result.length > 0) {
+            result.forEach((value) => {
+              newData[value[1]][value[0]] = BLACK;
+            });
+            const score = minimax(newData, depth - 1, true);
+            minScore = Math.min(minScore, score);
+          }
+        }
+      }
+    }
+    return minScore;
+  }
+}
+
+// ボードの評価関数
+function evaluate(board) {
+  const weights = [
+    [100, -20, 10, 5, 5, 10, -20, 100],
+    [-20, -50, -2, -2, -2, -2, -50, -20],
+    [10, -2, 2, 1, 1, 2, -2, 10],
+    [5, -2, 1, 1, 1, 1, -2, 5],
+    [5, -2, 1, 1, 1, 1, -2, 5],
+    [10, -2, 2, 1, 1, 2, -2, 10],
+    [-20, -50, -2, -2, -2, -2, -50, -20],
+    [100, -20, 10, 5, 5, 10, -20, 100],
+  ];
+
+  let score = 0;
+  for (let x = 0; x < cells; x++) {
+    for (let y = 0; y < cells; y++) {
+      if (board[y][x] === AI_COLOR) {
+        score += weights[y][x];
+      } else if (board[y][x] === BLACK) {
+        score -= weights[y][x];
+      }
+    }
+  }
+  return score;
+}
+
+// ディープコピーを作成
+function deepCopy(arr) {
+  return JSON.parse(JSON.stringify(arr));
 }
 
 // AIが置ける場所を探す
